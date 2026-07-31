@@ -741,6 +741,17 @@ For debugging or when working on rust-analyzer itself.
 Returns information about failed trait obligations at the given position.
 For debugging or when working on rust-analyzer itself.
 
+## Get Obligation Tree
+
+**Method:** `rust-analyzer/getObligationTree`
+
+**Request:** `TextDocumentPositionParams`
+
+**Response:** `string`
+
+Returns detailed information about transitive failed trait obligations
+at the given position.
+
 ## Interpret Function
 
 **Method:** `rust-analyzer/interpretFunction`

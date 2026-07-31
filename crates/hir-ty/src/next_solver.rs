@@ -23,6 +23,7 @@ pub mod obligation_ctxt;
 mod opaques;
 pub mod predicate;
 mod region;
+mod serialized_tree;
 mod solver;
 mod structural_normalize;
 mod ty;

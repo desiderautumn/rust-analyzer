@@ -950,6 +950,18 @@ impl Analysis {
         })
     }
 
+    pub fn get_obligation_tree(&self, offset: TextSize, file_id: FileId) -> Cancellable<String> {
+        self.with_db(|db| {
+            let sema = Semantics::new(db);
+            let source_file = sema.parse_guess_edition(file_id);
+
+            let Some(token) = source_file.syntax().token_at_offset(offset).next() else {
+                return String::new();
+            };
+            sema.get_obligation_tree(token).unwrap_or_default()
+        })
+    }
+
     pub fn editioned_file_id_to_vfs(&self, file_id: hir::EditionedFileId) -> FileId {
         file_id.file_id(&self.db)
     }

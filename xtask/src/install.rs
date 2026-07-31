@@ -95,7 +95,7 @@ fn install_client(sh: &Shell, client_opt: ClientOpt) -> anyhow::Result<()> {
     // Package extension.
     if cfg!(unix) {
         cmd!(sh, "npm --version").run().context("`npm` is required to build the VS Code plugin")?;
-        cmd!(sh, "npm ci").run()?;
+        //cmd!(sh, "npm ci").run()?;
 
         cmd!(sh, "npm run package --scripts-prepend-node-path").run()?;
     } else {

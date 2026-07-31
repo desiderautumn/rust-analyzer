@@ -328,6 +328,11 @@
                 "category": "rust-analyzer (syntax tree)"
             },
             {
+                "command": "rust-analyzer.getObligationTree",
+                "title": "Get Obligation Tree",
+                "category": "rust-analyzer"
+            },
+            {
                 "command": "rust-analyzer.viewMemoryLayout",
                 "title": "View Memory Layout",
                 "category": "rust-analyzer"
@@ -3866,6 +3871,10 @@
                 },
                 {
                     "command": "rust-analyzer.openCargoToml",
+                    "when": "inRustProject"
+                },
+                {
+                    "command": "rust-analyzer.getObligationTree",
                     "when": "inRustProject"
                 },
                 {

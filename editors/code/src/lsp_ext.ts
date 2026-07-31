@@ -82,6 +82,9 @@ export const evaluatePredicate = new lc.RequestType<
     EvaluatePredicateResult,
     void
 >("rust-analyzer/evaluatePredicate");
+export const getObligationTree = new lc.RequestType<lc.TextDocumentPositionParams, string, void>(
+    "rust-analyzer/getObligationTree",
+);
 export const getFailedObligations = new lc.RequestType<lc.TextDocumentPositionParams, string, void>(
     "rust-analyzer/getFailedObligations",
 );

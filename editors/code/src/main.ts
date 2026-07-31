@@ -195,6 +195,7 @@ function createCommands(): Record<string, CommandFactory> {
         ssr: { enabled: commands.ssr },
         evaluatePredicate: { enabled: commands.evaluatePredicate },
         serverVersion: { enabled: commands.serverVersion },
+        getObligationTree: { enabled: commands.getObligationTree },
         viewMemoryLayout: { enabled: commands.viewMemoryLayout },
         toggleCheckOnSave: { enabled: commands.toggleCheckOnSave },
         toggleLSPLogs: { enabled: commands.toggleLSPLogs },

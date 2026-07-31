@@ -1439,6 +1439,7 @@ impl GlobalState {
             .on::<NO_RETRY, lsp_ext::InternalTestingFetchConfigRequest>(handlers::internal_testing_fetch_config)
             .on::<RETRY, lsp_ext::EvaluatePredicateRequest>(handlers::handle_evaluate_predicate)
             .on::<RETRY, lsp_ext::GetFailedObligationsRequest>(handlers::get_failed_obligations)
+            .on::<RETRY, lsp_ext::GetObligationTreeRequest>(handlers::get_obligation_tree)
             .finish();
     }
 

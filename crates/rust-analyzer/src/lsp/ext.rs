@@ -968,6 +968,23 @@ impl Request for GetFailedObligationsRequest {
     const MESSAGE_DIRECTION: MessageDirection = MessageDirection::ClientToServer;
 }
 
+pub enum GetObligationTreeRequest {}
+
+#[derive(Deserialize, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GetObligationTreeParams {
+    pub text_document: TextDocumentIdentifier,
+    pub position: Position,
+}
+
+impl Request for GetObligationTreeRequest {
+    type Params = GetObligationTreeParams;
+    type Result = String;
+    const METHOD: LspRequestMethod<'_> =
+        LspRequestMethod::new("rust-analyzer/getObligationTree");
+    const MESSAGE_DIRECTION: MessageDirection = MessageDirection::ClientToServer;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

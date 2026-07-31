@@ -1,9 +1,12 @@
 use rustc_type_ir::{solve::GoalSource, solve::inspect::GoalEvaluation};
+use rustc_type_ir::solve::{Certainty, NoSolution};
 use serde_derive::{Deserialize, Serialize};
 
 use crate::next_solver::inspect::{InspectCandidate, InspectGoal};
 use crate::next_solver::{AnyImplId, infer::InferCtxt};
+use crate::next_solver::infer::traits::PredicateObligation;
 use crate::{Span, next_solver::DbInterner};
+use crate::next_solver::Goal;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProofTreeData {
@@ -108,3 +111,48 @@ impl<'a, 'db> ProofTreeSerializer<'a, 'db> {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ObligationTreeData {
+    /*
+    pub goal: String,
+    pub result: String,
+    pub depth: usize,
+    pub candidates: Vec<CandidateData>,
+    */
+}
+
+pub fn process_obligation_for_tree<'tcx>(
+    infcx: &InferCtxt<'tcx>,
+    obl: &PredicateObligation<'tcx>,
+    result: Result<Certainty, NoSolution>,
+) -> ObligationTreeData {
+    use crate::next_solver::serialized_tree::serialize::try_serialize;
+    // probe necessary?
+    infcx.probe(|_| {
+        let obl_resolved = &infcx.resolve_vars_if_possible(obl.clone());
+        // bless_fulfilled necessary?
+
+        // below: inlined generate_tree
+        let goal = Goal {
+            predicate: obl_resolved.predicate,
+            param_env: obl_resolved.param_env,
+        };
+        //let span = obl_resolved.span; // for later
+        // body owner necessary? it goes unused later...
+
+        let stree = try_serialize(goal, infcx);
+        // below: inlined try_serialize
+        // try_serialize(goal, result, span, infcx)
+        // dump_proof_tree necessary? might just be for logging...
+        /*
+        infcx.probe(|_| {
+
+            // finally, tls::store_tree(stree)
+        });
+        */
+
+    });
+    ObligationTreeData {}
+}
+

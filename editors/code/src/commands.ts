@@ -708,6 +708,18 @@ export function getFailedObligations(ctx: CtxInit): Cmd {
     );
 }
 
+export function getObligationTree(ctx: CtxInit): Cmd {
+    const uri = `rust-analyzer-obligation-tree://getObligationTree/getObligationTree.rs`;
+    const scheme = `rust-analyzer-obligation-tree`;
+    return viewFileUsingTextDocumentContentProvider(
+        ctx,
+        ra.getObligationTree,
+        uri,
+        scheme,
+        true,
+    );
+}
+
 // Opens the virtual file that will show the MIR of the function containing the cursor position
 //
 // The contents of the file come from the `TextDocumentContentProvider`

@@ -37,7 +37,7 @@ use hir_ty::{
     infer_query_with_inspect,
     next_solver::{
         AnyImplId, DbInterner,
-        format_proof_tree::{ProofTreeData, dump_proof_tree_structured},
+        format_proof_tree::{ProofTreeData, ObligationTreeData, process_obligation_for_tree, dump_proof_tree_structured},
     },
 };
 use intern::{Interned, Symbol, sym};
@@ -2598,6 +2598,54 @@ impl<'db> SemanticsImpl<'db> {
                     RESULT.with(|data| data.borrow_mut().drain(..).collect());
                 let data = serde_json::to_string_pretty(&data).unwrap_or_else(|_| "[]".to_owned());
                 Some(data)
+            }
+            _ => None,
+        }
+    }
+
+    pub fn get_obligation_tree(&self, token: SyntaxToken) -> Option<String> {
+        let node = token.parent()?;
+        let node = self.find_file(&node);
+
+        let container = self.with_ctx(|ctx| ctx.find_container(node))?;
+
+        match container {
+            ChildContainer::DefWithBodyId(def) => {
+                thread_local! {
+                    static OBLIGATION_RESULTS: RefCell<Vec<ObligationTreeData>> =
+                        RefCell::new(Vec::new());
+                }
+                infer_query_with_inspect(
+                    self.db,
+                    def, // DefWithBodyId, can get BodyId from this
+                    // ObligationInspector
+                    Some(|
+                        infer_ctxt, // InferCtxt
+                        obligation, // PredicateObligation
+                        result, // Result<Certainty, NoSolution>
+                        proof_tree // Option<GoalEvaluation<DbInterner>>
+                    | {
+                        /*
+                        //dbg!(obligation);
+                        if let Some(tree) = proof_tree {
+                            let data =
+                                dump_proof_tree_structured(tree, hir_ty::Span::Dummy, infer_ctxt);
+                            OBLIGATION_RESULTS.with(|ctx| ctx.borrow_mut().push(data));
+                        }
+                        */
+                        let data = process_obligation_for_tree(
+                            infer_ctxt,
+                            obligation,
+                            result
+                        );
+                        OBLIGATION_RESULTS.with(|ctx| ctx.borrow_mut().push(data));
+                    }),
+                    LoweringMode::Ide,
+                );
+                let data: Vec<ObligationTreeData> =
+                    OBLIGATION_RESULTS.with(|data| data.borrow_mut().drain(..).collect());
+                let json = serde_json::to_string_pretty(&data).unwrap_or_else(|_| "[]".to_owned());
+                Some(json)
             }
             _ => None,
         }
